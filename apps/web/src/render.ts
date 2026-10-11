@@ -11,7 +11,8 @@ export function renderDashboard(users: readonly User[], orders: readonly Order[]
   const sections = users.map((user) => {
     const lines = (ordersByUser[user.id] ?? []).map((order) => `<li>${escapeHtml(describeOrder(order))}</li>`);
     const body = lines.length > 0 ? `<ul>${lines.join('')}</ul>` : '<p>No orders yet.</p>';
-    return `<section><h2>${escapeHtml(user.name)}</h2>${body}</section>`;
+    const count = `<small>${lines.length} ${lines.length === 1 ? 'order' : 'orders'}</small>`;
+    return `<section><h2>${escapeHtml(user.name)} ${count}</h2>${body}</section>`;
   });
 
   return sections.join('');
