@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { formatCurrency, groupBy, slugify, sum } from './index.js';
+import { formatCurrency, groupBy, slugify, sum, truncate } from './index.js';
+
+test('truncate', () => {
+  assert.equal(truncate('moonrepo', 20), 'moonrepo');
+  assert.equal(truncate('moonrepo', 5), 'moon…');
+});
 
 test('slugify', () => {
   assert.equal(slugify('  Hello, Moon World! '), 'hello-moon-world');

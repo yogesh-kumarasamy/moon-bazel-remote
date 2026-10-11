@@ -6,6 +6,10 @@ export function slugify(input: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+export function truncate(input: string, maxLength: number): string {
+  return input.length <= maxLength ? input : `${input.slice(0, Math.max(0, maxLength - 1))}…`;
+}
+
 export function formatCurrency(cents: number, currency = 'USD'): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(cents / 100);
 }
