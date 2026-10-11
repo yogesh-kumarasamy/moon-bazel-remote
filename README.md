@@ -114,6 +114,24 @@ cache, runs `moon run :build :test`, prints where each task result came from
 
 `moon run … --force` re-executes and re-uploads (also `bust_cache` input on the workflow).
 
+## Results against the deployed GCP cache (2026-10-11)
+
+Cloud Run `us-central1`, bucket in `us-central1`, dev machine in India.
+
+| Scenario | Producer → consumer | Result |
+| --- | --- | --- |
+| dev → dev (same machine) | macOS seed → macOS with wiped local cache | 15/15 remote hits |
+| dev → CI | macOS seed → GitHub `ubuntu-latest` build job | 15/15 remote hits, same hashes |
+| CI → CI | build job → fresh runner job | 15/15 remote hits (asserted in CI) |
+| CI → dev | CI builds a new commit → clean Linux container clones it | 15/15 remote hits |
+| dev → dev | dev A builds an **uncommitted** logger change → dev B, same patch | A: 8 executed / 7 hits; B: 15/15 hits |
+
+- A remote hit costs about 120 ms per task on GitHub runners and about 550 ms from India. For tasks this
+  small, a remote hit is only slightly faster than running the task. The gain grows with task cost.
+  Put Cloud Run and the bucket near your developers if latency matters; the GCS free tier only
+  covers US regions.
+- Uncommitted work is shareable: the hash is computed from file contents, not commits.
+
 ## Findings so far (validated locally against bazel-remote v2.6.2)
 
 - macOS-built results are **remote hits on Linux** (`node:24-bookworm`): task hashes
@@ -127,6 +145,10 @@ cache, runs `moon run :build :test`, prints where each task result came from
   some agent env vars (e.g. `AI_AGENT`) as CI, hence the `127.0.0.1.nip.io` trick above.
 - moon's pnpm plugin fails on a pnpm 8 (`lockfileVersion: 6.0`) lockfile
   (`Failed to parse a version … esbuild/freebsd-arm64@0.28.2`); `.prototools` pins pnpm 10.
+- **Dev-machine drift:** inside moon, pnpm's global bin directory (`~/Library/pnpm` on macOS)
+  comes before the proto-pinned pnpm on PATH. An old standalone pnpm there silently rewrites the
+  lockfile. `engines.pnpm: ">=10"` makes this fail with `ERR_PNPM_UNSUPPORTED_ENGINE` instead.
+  Fix it by removing the old binary or running `pnpm self-update`.
 
 ## Gotchas and costs
 
