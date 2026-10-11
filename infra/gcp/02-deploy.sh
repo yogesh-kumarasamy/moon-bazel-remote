@@ -29,7 +29,7 @@ gcloud run deploy "$SERVICE" \
   --concurrency 80 \
   --timeout 300 \
   --execution-environment gen2 \
-  --args "--dir=/data,--max_size=${LOCAL_CACHE_GIB},--http_address=0.0.0.0:8080,--gcs_proxy.bucket=${BUCKET},--gcs_proxy.use_default_credentials"
+  --args="--dir=/data,--max_size=${LOCAL_CACHE_GIB},--http_address=0.0.0.0:8080,--gcs_proxy.bucket=${BUCKET},--gcs_proxy.use_default_credentials"
 
 url="$(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format 'value(status.url)')"
 echo "Service URL: ${url}"
