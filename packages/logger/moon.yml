@@ -1,0 +1,12 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'library'
+language: 'typescript'
+tags: ['shared']
+
+project:
+  title: 'Logger'
+  description: 'Structured JSON logger used by services and the admin CLI.'
+
+dependsOn:
+  - 'shared-utils'

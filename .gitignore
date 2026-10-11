@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# moon
+.moon/cache/
+.moon/docker/
+
+# local experiment output
+experiments/results/

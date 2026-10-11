@@ -1,0 +1,45 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'typescript'
+tags: ['app']
+
+project:
+  title: 'Web'
+  description: 'Browser dashboard bundled with esbuild; talks to orders-api and users-api.'
+
+dependsOn:
+  - 'api-client'
+  - 'shared-utils'
+
+tasks:
+  typecheck:
+    command: 'tsc -p tsconfig.json'
+    inputs:
+      - '@group(sources)'
+      - '@group(configs)'
+    deps:
+      - '^:build'
+
+  build:
+    script: 'esbuild src/main.ts --bundle --format=esm --minify --outfile=dist/app.js && cp src/index.html dist/index.html'
+    inputs:
+      - '@group(sources)'
+      - '@group(configs)'
+    outputs:
+      - 'dist'
+    deps:
+      - 'typecheck'
+      - '^:build'
+
+  # Node strips TypeScript types natively, so tests run straight from src.
+  test:
+    command: 'node --test "src/**/*.test.ts"'
+    deps:
+      - '^:build'
+
+  serve:
+    command: 'python3 -m http.server 8080 --directory dist'
+    preset: 'server'
+    deps:
+      - 'build'

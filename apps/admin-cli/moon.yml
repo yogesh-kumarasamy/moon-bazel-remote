@@ -1,0 +1,21 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'typescript'
+tags: ['app']
+
+project:
+  title: 'Admin CLI'
+  description: 'Terminal report of users and their orders, built on the shared api client.'
+
+dependsOn:
+  - 'api-client'
+  - 'logger'
+  - 'shared-utils'
+
+tasks:
+  report:
+    command: 'node dist/main.js'
+    preset: 'server'
+    deps:
+      - 'build'

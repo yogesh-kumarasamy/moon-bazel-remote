@@ -1,0 +1,23 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'typescript'
+tags: ['service']
+
+project:
+  title: 'Users API'
+  description: 'HTTP service exposing users.'
+
+dependsOn:
+  - 'api-client'
+  - 'logger'
+  - 'shared-utils'
+
+tasks:
+  start:
+    command: 'node dist/main.js'
+    preset: 'server'
+    deps:
+      - 'build'
+    env:
+      PORT: '3001'

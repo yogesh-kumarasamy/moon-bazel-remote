@@ -1,0 +1,29 @@
+# https://moonrepo.dev/docs/config/workspace
+$schema: 'https://moonrepo.dev/schemas/workspace.json'
+
+projects:
+  - 'apps/*'
+  - 'services/*'
+  - 'packages/*'
+
+vcs:
+  client: 'git'
+  defaultBranch: 'main'
+
+telemetry: false
+
+# Remote cache: bazel-remote running on Cloud Run, backed by a GCS bucket.
+# The Cloud Run service is private (IAM). moon sends the value of the
+# MOON_REMOTE_TOKEN env var as `Authorization: Bearer <token>`, which must be a
+# Google-signed ID token for an identity holding roles/run.invoker.
+#   - devs: source scripts/remote-cache-env.sh
+#   - CI:   google-github-actions/auth with token_format: id_token
+# `host` is rewritten by infra/gcp/deploy.sh after the service is deployed.
+remote:
+  api: 'http'
+  host: 'https://bazel-remote-uz56pdqadq-uc.a.run.app'
+  auth:
+    token: 'MOON_REMOTE_TOKEN'
+  cache:
+    compression: 'none'
+    retryCount: 3

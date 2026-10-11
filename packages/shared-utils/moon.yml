@@ -1,0 +1,9 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'library'
+language: 'typescript'
+tags: ['shared']
+
+project:
+  title: 'Shared utils'
+  description: 'Pure helpers (formatting, ids, money) reused by services and apps.'
