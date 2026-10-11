@@ -1,0 +1,12 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'library'
+language: 'typescript'
+tags: ['shared']
+
+project:
+  title: 'API client'
+  description: 'Shared domain types and a typed fetch client for users-api and orders-api.'
+
+dependsOn:
+  - 'shared-utils'

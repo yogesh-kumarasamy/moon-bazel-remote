@@ -1,0 +1,14 @@
+# https://moonrepo.dev/docs/config/toolchain
+# Pinned versions keep task hashes identical across CI runners and dev
+# machines, which is what makes remote cache hits possible.
+$schema: 'https://moonrepo.dev/schemas/toolchains.json'
+
+javascript:
+  packageManager: 'pnpm'
+  inferTasksFromScripts: false
+
+node:
+  version: '24.10.0'
+
+pnpm:
+  version: '10.34.6'

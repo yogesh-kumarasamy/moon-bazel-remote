@@ -1,0 +1,29 @@
+# Tasks inherited by every project. Projects can override them in moon.yml.
+$schema: 'https://moonrepo.dev/schemas/tasks.json'
+
+fileGroups:
+  sources:
+    - 'src/**/*'
+  configs:
+    - 'package.json'
+    - 'tsconfig.json'
+    - '/tsconfig.base.json'
+
+tasks:
+  build:
+    command: 'tsc -p tsconfig.json'
+    inputs:
+      - '@group(sources)'
+      - '@group(configs)'
+    outputs:
+      - 'dist'
+    deps:
+      - '^:build'
+
+  test:
+    command: 'node --test "dist/**/*.test.js"'
+    inputs:
+      - '@group(sources)'
+      - '@group(configs)'
+    deps:
+      - 'build'

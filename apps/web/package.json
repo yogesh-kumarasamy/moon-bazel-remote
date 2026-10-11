@@ -1,0 +1,10 @@
+{
+  "name": "@mbr/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@mbr/api-client": "workspace:*",
+    "@mbr/shared-utils": "workspace:*"
+  }
+}

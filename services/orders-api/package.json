@@ -1,0 +1,11 @@
+{
+  "name": "@mbr/orders-api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@mbr/api-client": "workspace:*",
+    "@mbr/logger": "workspace:*",
+    "@mbr/shared-utils": "workspace:*"
+  }
+}

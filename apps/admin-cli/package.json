@@ -1,0 +1,14 @@
+{
+  "name": "@mbr/admin-cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "mbr-admin": "./dist/main.js"
+  },
+  "dependencies": {
+    "@mbr/api-client": "workspace:*",
+    "@mbr/logger": "workspace:*",
+    "@mbr/shared-utils": "workspace:*"
+  }
+}

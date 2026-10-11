@@ -1,0 +1,23 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'typescript'
+tags: ['service']
+
+project:
+  title: 'Orders API'
+  description: 'HTTP service exposing orders with computed totals.'
+
+dependsOn:
+  - 'api-client'
+  - 'logger'
+  - 'shared-utils'
+
+tasks:
+  start:
+    command: 'node dist/main.js'
+    preset: 'server'
+    deps:
+      - 'build'
+    env:
+      PORT: '3002'
