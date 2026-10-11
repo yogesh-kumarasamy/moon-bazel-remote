@@ -19,7 +19,10 @@ export function createUsersServer(logger: Logger, users: readonly User[] = seedU
 
     if (req.method !== 'GET') return send(405, { error: 'method not allowed' });
     if (url.pathname === '/healthz') return send(200, { ok: true });
-    if (url.pathname === '/users') return send(200, users);
+    if (url.pathname === '/users') {
+      const query = url.searchParams.get('q')?.trim().toLowerCase();
+      return send(200, query ? users.filter((user) => user.name.toLowerCase().includes(query)) : users);
+    }
 
     const match = /^\/users\/([^/]+)$/.exec(url.pathname);
     if (match) {

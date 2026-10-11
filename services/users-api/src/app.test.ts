@@ -21,6 +21,11 @@ test('lists users through the shared api client', async () => {
   assert.deepEqual(await client.getUser('u-2'), seedUsers[1]);
 });
 
+test('filters users by name with ?q=', async () => {
+  const response = await fetch(`${baseUrl}/users?q=grace`);
+  assert.deepEqual(await response.json(), [seedUsers[1]]);
+});
+
 test('returns 404 for unknown users', async () => {
   const response = await fetch(`${baseUrl}/users/nope`);
   assert.equal(response.status, 404);
