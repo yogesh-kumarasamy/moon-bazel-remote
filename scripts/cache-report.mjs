@@ -5,7 +5,7 @@
 //
 // --expect remote  exit 1 unless every task was restored from the remote cache
 // --expect cached  exit 1 unless every task was a local or remote cache hit
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
@@ -23,6 +23,11 @@ const SOURCES = {
   cached: 'local hit',
   passed: 'executed',
 };
+
+if (!existsSync(values.report)) {
+  console.error(`No moon run report at ${values.report}; did moon run fail before executing tasks?`);
+  process.exit(1);
+}
 
 const report = JSON.parse(readFileSync(values.report, 'utf8'));
 const tasks = report.actions
