@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      bust_cache:
+        description: Run with --force to re-execute every task and re-upload results
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  id-token: write # needed to mint the OIDC token for Workload Identity Federation
+
+env:
+  BAZEL_REMOTE_URL: ${{ vars.BAZEL_REMOTE_URL }}
+  GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
+  GCP_CI_SERVICE_ACCOUNT: ${{ vars.GCP_CI_SERVICE_ACCOUNT }}
+
+jobs:
+  build:
+    name: Build and test (seeds the cache)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-moon-remote-cache
+
+      - name: moon run :build :test
+        run: moon run :build :test ${{ inputs.bust_cache && '--force' || '' }}
+
+      - name: Cache report
+        if: always()
+        run: node scripts/cache-report.mjs --label ci-build
+
+  # A second, brand-new runner with an empty local cache. Everything the first
+  # job produced should come back from the remote cache (CI -> CI).
+  verify-remote-hits:
+    name: Fresh runner restores from remote cache
+    needs: build
+    if: ${{ vars.BAZEL_REMOTE_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-moon-remote-cache
+
+      - name: moon run :build :test
+        run: moon run :build :test
+
+      - name: Assert every task was a remote hit
+        run: node scripts/cache-report.mjs --label ci-fresh-runner --expect remote

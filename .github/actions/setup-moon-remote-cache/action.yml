@@ -1,0 +1,32 @@
+name: Setup moon with remote cache
+description: Installs the pinned toolchain and exports MOON_REMOTE_TOKEN for the bazel-remote Cloud Run service.
+
+runs:
+  using: composite
+  steps:
+    # GitHub OIDC -> Workload Identity Federation -> ID token whose audience is
+    # the Cloud Run URL. No long-lived keys are stored in the repo.
+    - id: auth
+      if: ${{ env.BAZEL_REMOTE_URL != '' }}
+      uses: google-github-actions/auth@v3
+      with:
+        workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+        service_account: ${{ env.GCP_CI_SERVICE_ACCOUNT }}
+        token_format: id_token
+        id_token_audience: ${{ env.BAZEL_REMOTE_URL }}
+        id_token_include_email: true
+
+    - if: ${{ env.BAZEL_REMOTE_URL != '' }}
+      shell: bash
+      run: |
+        echo "::add-mask::${{ steps.auth.outputs.id_token }}"
+        echo "MOON_REMOTE_TOKEN=${{ steps.auth.outputs.id_token }}" >> "$GITHUB_ENV"
+
+    - if: ${{ env.BAZEL_REMOTE_URL == '' }}
+      shell: bash
+      run: echo "::warning::BAZEL_REMOTE_URL is not set; running without the remote cache. See infra/gcp/03-github-oidc.sh."
+
+    # Installs proto plus the moon/node/pnpm versions pinned in .prototools.
+    - uses: moonrepo/setup-toolchain@v0
+      with:
+        auto-install: true
