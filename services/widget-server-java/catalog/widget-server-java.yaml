@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: widget-server-java
+  title: Widget Server (Java)
+  description: Java port of widget-server serving widget loader scripts, used to evaluate moon remote caching for Gradle projects.
+  tags:
+    - java
+    - widget
+    - backend
+spec:
+  type: service
+  lifecycle: experimental
+  owner: livesupport

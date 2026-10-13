@@ -1,0 +1,12 @@
+plugins {
+    // Lets Gradle locate/provision JDKs for the Java toolchain and the pinned
+    // daemon JVM (gradle/gradle-daemon-jvm.properties -> toolchainVersion=25).
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+// Gradle root for the Java services, same shape as
+// chatsupport-enterprise/engineering/services. moon projects call the wrapper
+// one level up: `../gradlew :<project>:<task>`.
+rootProject.name = "moon-java-services"
+
+include(":widget-server-java")

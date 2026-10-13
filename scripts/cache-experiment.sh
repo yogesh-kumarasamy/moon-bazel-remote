@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs build+test the way a brand-new machine would (no local moon cache, no
-# dist folders) and reports which tasks came from the remote cache.
+# dist or Gradle build folders) and reports which tasks came from the remote cache.
 #
 #   scripts/cache-experiment.sh <label> [--expect remote|cached] [--keep-local]
 #
@@ -28,6 +28,7 @@ fi
 if [[ "$keep_local" == false ]]; then
   rm -rf .moon/cache
   find apps services packages -maxdepth 2 -name dist -type d -prune -exec rm -rf {} +
+  find services -maxdepth 2 -name build -type d -prune -exec rm -rf {} +  # Gradle
 fi
 
 moon run :build :test

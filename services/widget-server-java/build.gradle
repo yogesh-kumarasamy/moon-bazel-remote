@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Fixed jar name (no version suffix) so moon's `outputs`, the Dockerfile and
+// the `serve` task all point at one stable path.
+tasks.named('jar') {
+    archiveFileName = 'widget-server-java.jar'
+    manifest {
+        attributes 'Main-Class': 'com.cs.widgetserver.WidgetServerApplication'
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}

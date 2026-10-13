@@ -3,7 +3,7 @@ $schema: 'https://moonrepo.dev/schemas/workspace.json'
 
 projects:
   - 'apps/*'
-  - 'services/*'
+  - 'services/*/moon.yml' # only dirs with a moon.yml; skips the Gradle root's gradle/ dir
   - 'packages/*'
 
 vcs:

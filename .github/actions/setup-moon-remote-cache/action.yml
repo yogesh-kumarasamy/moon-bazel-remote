@@ -26,6 +26,13 @@ runs:
       shell: bash
       run: echo "::warning::BAZEL_REMOTE_URL is not set; running without the remote cache. See infra/gcp/03-github-oidc.sh."
 
+    # JDK for the Gradle projects under services/ (no moon Java toolchain).
+    # Gradle's toolchain pins Java 25; the wrapper finds this install via JAVA_HOME.
+    - uses: actions/setup-java@v5
+      with:
+        distribution: temurin
+        java-version: '25'
+
     # Installs proto plus the moon/node/pnpm versions pinned in .prototools.
     - uses: moonrepo/setup-toolchain@v0
       with:

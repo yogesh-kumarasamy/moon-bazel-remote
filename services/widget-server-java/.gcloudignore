@@ -1,0 +1,7 @@
+# The image only needs the prebuilt jar (see Dockerfile). Keep sources and
+# Gradle state out of the Cloud Build upload.
+.gradle/
+src/
+build/
+!build/libs/
+*.md

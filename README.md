@@ -15,6 +15,8 @@ packages/            reusable libraries
 services/
   users-api/         node:http service (-> api-client, logger, shared-utils)
   orders-api/        node:http service (-> api-client, logger, shared-utils)
+  widget-server-java/  Java 25 / Gradle service, moon-cached (see its README)
+  gradlew, *.gradle  Gradle root for the Java services (../gradlew :<project>:<task>)
 apps/
   web/               esbuild browser bundle (-> api-client, shared-utils)
   admin-cli/         terminal report        (-> api-client, logger, shared-utils)
@@ -31,6 +33,7 @@ Toolchain versions are pinned in `.prototools` and `.moon/toolchains.yml`.
 moon run :build :test          # everything
 moon run users-api:start       # http://localhost:3001/users
 moon run orders-api:start      # http://localhost:3002/orders
+moon run widget-server-java:serve  # http://localhost:3003/api/client/get/script/demo
 moon run admin-cli:report      # needs both services running
 ```
 

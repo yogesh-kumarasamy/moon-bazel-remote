@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://moonrepo.dev/schemas/project.json
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'java'
+stack: 'backend'
+tags: ['service']
+
+project:
+  title: 'Widget Server (Java)'
+  description: 'Java port of chatsupport widget-server, used to try moon remote caching on a Gradle project.'
+
+# The workspace-wide build/test in .moon/tasks/all.yml are tsc/node tasks.
+# Project tasks with the same name would merge with them (inputs/deps append),
+# so drop them and define the Gradle versions below from scratch.
+workspace:
+  inheritedTasks:
+    exclude: ['build', 'test']
+
+fileGroups:
+  sources:
+    - 'src/**/*'
+    - 'build.gradle'
+  # Shared Gradle root (one level up, like engineering/services in
+  # chatsupport-enterprise). Changing the wrapper, the daemon JVM pin or the
+  # root build script must invalidate every Java task.
+  gradle:
+    - '/services/build.gradle'
+    - '/services/settings.gradle'
+    - '/services/gradle/**/*'
+
+# Java has no moon toolchain, so tasks run on the system toolchain and call the
+# Gradle wrapper. Difference from chatsupport-enterprise widget-api: that repo
+# sets `cache: false` on every Java task and relies on Gradle alone. Here the
+# tasks declare inputs and outputs, so moon hashes them and can restore
+# build/libs and test results from the bazel-remote cache without starting
+# Gradle at all.
+tasks:
+  build:
+    command: '../gradlew :widget-server-java:assemble --console=plain'
+    toolchains: 'system'
+    inputs:
+      - '@group(sources)'
+      - '@group(gradle)'
+      - '!**/*.md'
+    outputs:
+      - 'build/libs'
+
+  # Depends on build so moon never runs two Gradle invocations against the same
+  # build/ directory at once (the race widget-api hit with build + test in CI).
+  test:
+    command: '../gradlew :widget-server-java:test --console=plain'
+    toolchains: 'system'
+    inputs:
+      - '@group(sources)'
+      - '@group(gradle)'
+      - '!**/*.md'
+    outputs:
+      - 'build/test-results/test'
+      - 'build/reports/jacoco/test/jacocoTestReport.xml'
+    deps:
+      - 'build'
+
+  # Runs the cached jar; on a remote cache hit no Gradle run happens at all.
+  serve:
+    command: 'java -jar build/libs/widget-server-java.jar'
+    toolchains: 'system'
+    preset: 'server'
+    deps:
+      - 'build'
+    env:
+      PORT: '3003'
+
+  image:
+    command: 'docker build -t widget-server-java .'
+    toolchains: 'system'
+    deps:
+      - 'build'
+    options:
+      cache: false
+      runInCI: false

@@ -8,3 +8,7 @@ dist/
 
 # local experiment output
 experiments/results/
+
+# gradle
+.gradle/
+services/*/build/
